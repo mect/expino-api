@@ -15,7 +15,7 @@ func getNewsItems() ([]NewsItem, error) {
 
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			item := NewsItem{}
+			item := NewNewsItem()
 			json.Unmarshal(v, &item)
 			items = append(items, item)
 		}
@@ -29,7 +29,7 @@ func getNewsItems() ([]NewsItem, error) {
 }
 
 func getNewsItem(id int) (NewsItem, error) {
-	item := NewsItem{}
+	item := NewNewsItem()
 
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("news"))

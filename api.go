@@ -31,7 +31,7 @@ func getAllNewsHandler(c echo.Context) error {
 }
 
 func addNewsHandler(c echo.Context) error {
-	item := NewsItem{}
+	item := NewNewsItem()
 	c.Bind(&item)
 	err := addNewsItem(item)
 	if err != nil {
@@ -43,7 +43,7 @@ func addNewsHandler(c echo.Context) error {
 }
 
 func editNewsHandler(c echo.Context) error {
-	item := NewsItem{}
+	item := NewNewsItem()
 	c.Bind(&item)
 	err := editNewsItem(item)
 	if err != nil {

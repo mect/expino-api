@@ -12,7 +12,7 @@ import { getNews, editNews, addNews } from '../apis/news_api'
 class NewsEdit extends Component {
     constructor(props) {
         super(props)
-        this.state = { title: "", id:-1, loading: false, editorState: EditorState.createEmpty(), isSaving: false }
+        this.state = { title: "", id:-1, loading: false, editorState: EditorState.createEmpty(), isSaving: false, slideTime: 10 }
 
         if (this.props.match.params.id !== "new") {
             this.state.loading = true
@@ -33,7 +33,7 @@ class NewsEdit extends Component {
         const contentBlock = htmlToDraft(res.data.content);
         const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
 
-        this.setState({ loading: false, title: res.data.title, editorState: EditorState.createWithContent(contentState) })
+        this.setState({ loading: false, title: res.data.title, editorState: EditorState.createWithContent(contentState), slideTime: res.data.slideTime })
     }
 
     onEditorStateChange(editorState) {
@@ -44,10 +44,10 @@ class NewsEdit extends Component {
 
     save() {
         const content = draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()))
-        console.log(this.title.input);
         const title = this.title.input.value
+        const slideTime = parseInt(this.slideTime.input.value, 10)
 
-        this.state.id === -1 ? addNews({ title, content }).then(this.doneSaving) : editNews({ id: this.state.id, title, content }).then(this.doneSaving)
+        this.state.id === -1 ? addNews({ title, content, slideTime }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime }).then(this.doneSaving)
         this.setState({ isSaving: true })
     }
 
@@ -64,6 +64,9 @@ class NewsEdit extends Component {
             <Row><h2>Nieuws artikel bewerken</h2></Row>
             <Row>
 	            <Input s={12} label="Titel" validate defaultValue={this.state.title} ref={(c) => this.title = c} />
+            </Row>
+            <Row>
+                <Input type="number" label="Duur slide" s={4} defaultValue={this.state.slideTime} ref={(c) => this.slideTime = c} />
             </Row>
             <Row>
             <Editor
