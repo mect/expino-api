@@ -1,7 +1,7 @@
 ARG arch
 FROM multiarch/alpine:${arch}-edge
 
-RUN mkdir /opt/kiosk
+RUN mkdir -p /opt/kiosk
 
 WORKDIR /opt/kiosk
 
