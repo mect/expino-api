@@ -1,6 +1,13 @@
 ARG arch
 FROM multiarch/alpine:${arch}-edge
 
-COPY ./expino-backend /expino-backend
+RUN mkdir /opt/kiosk
 
-CMD /expino-backend
+WORKDIR /opt/kiosk
+
+COPY ./expino-backend /opt/kiosk/expino-backend
+COPY ./frontend/build /opt/kiosk/expino-backend/frontend/build
+
+EXPOSE 8080
+
+CMD /opt/kioskexpino-backend
