@@ -1,7 +1,7 @@
 ARG arch
 FROM multiarch/alpine:${arch}-edge
 
-RUN mkdir -p /opt/kiosk
+RUN mkdir -p /opt/kiosk/expino-backend/frontend/build
 
 WORKDIR /opt/kiosk
 
