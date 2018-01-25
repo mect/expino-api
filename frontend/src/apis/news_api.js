@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const HOST = "http://localhost:8080"
+const HOST = `http://${window.location.host}`
 
 export const getAllNews = () => axios.get(`${HOST}/api/news`)
 export const getNews = (id) => axios.get(`${HOST}/api/news/${id}`)
