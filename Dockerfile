@@ -10,4 +10,4 @@ COPY ./frontend/build /opt/kiosk/frontend/build
 
 EXPOSE 8080
 
-CMD /opt/kiosk/kioskexpino-backend
+CMD /opt/kiosk/expino-backend/expino-backend
