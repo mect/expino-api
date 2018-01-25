@@ -23,7 +23,7 @@ before_script:
     - docker run --rm --privileged multiarch/qemu-user-static:register
 script:
     - go test ./...
-    - GOARCH=$GO_ARCH GOARM=$GO_ARM CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./
+    - GOARCH=$GO_ARCH GOARM=$GO_ARM CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./
     - cd frontend && npm install && yarn && npm run-script build && cd ..
     - sudo ./build.sh --arch="$ARCH" --qemuarch="$QEMU_ARCH" --qemuversion="$QEMU_VER" --repo="$DOCKER_REPO"
 after_success:
