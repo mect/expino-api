@@ -37,6 +37,8 @@ func main() {
 	e.PUT("/api/news", editNewsHandler)
 	e.DELETE("/api/news/:id", deleteNewsHandler)
 
+	e.GET("/api/traffic", getTrafficHandler)
+
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
