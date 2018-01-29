@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
 
 	bolt "github.com/coreos/bbolt"
 )
@@ -16,7 +15,6 @@ func getNewsItems() ([]NewsItem, error) {
 
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			fmt.Println(string(v))
 			item := NewNewsItem()
 			json.Unmarshal(v, &item)
 			items = append(items, item)
@@ -26,8 +24,6 @@ func getNewsItems() ([]NewsItem, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(items)
 
 	return items, nil
 }
