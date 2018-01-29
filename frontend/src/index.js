@@ -7,6 +7,7 @@ import Footer from './components/footer'
 import Home from './components/home'
 import NewsOverview from './components/newsoverview'
 import NewsEdit from './components/newsedit'
+import FeatureSlides from './components/featureslides'
 
 const App = function () {
     return (
@@ -18,6 +19,7 @@ const App = function () {
                     <Route path="/" exact component={Home} />
                     <Route path="/news" exact component={NewsOverview} />
                     <Route path="/news/edit/:id?" component={NewsEdit} />
+                    <Route path="/featureslides" exact component={FeatureSlides}/>
                 </div>
                 <Footer />
             </div>

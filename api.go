@@ -68,3 +68,25 @@ func deleteNewsHandler(c echo.Context) error {
 	go sendUpdate()
 	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 }
+
+func editFeatureSlides(c echo.Context) error {
+	items := []string{}
+	c.Bind(&items)
+	err := editSettings("featureSlides", items)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	go sendUpdate()
+	return c.JSON(http.StatusOK, items)
+}
+
+func getFeatureSlides(c echo.Context) error {
+	items := []string{}
+	err := getSetting("featureSlides", &items)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, items)
+}

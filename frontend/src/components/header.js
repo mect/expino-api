@@ -7,6 +7,7 @@ export default () => {
         <Navbar brand='Expino Kiosk' right>
             <li><NavLink to="/">Home</NavLink></li>
             <li><NavLink to="/news">Nieuws</NavLink></li>
+            <li><NavLink to="/featureslides">Slides</NavLink></li>
         </Navbar>
     </Row>
 }

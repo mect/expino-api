@@ -37,6 +37,9 @@ func main() {
 	e.PUT("/api/news", editNewsHandler)
 	e.DELETE("/api/news/:id", deleteNewsHandler)
 
+	e.PUT("/api/settings/featureslides", editFeatureSlides)
+	e.GET("/api/settings/featureslides", getFeatureSlides)
+
 	e.GET("/api/traffic", getTrafficHandler)
 
 	http.Handle("/", e)

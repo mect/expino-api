@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 
 	bolt "github.com/coreos/bbolt"
 )
@@ -15,6 +16,7 @@ func getNewsItems() ([]NewsItem, error) {
 
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
+			fmt.Println(string(v))
 			item := NewNewsItem()
 			json.Unmarshal(v, &item)
 			items = append(items, item)
@@ -24,6 +26,8 @@ func getNewsItems() ([]NewsItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(items)
 
 	return items, nil
 }
@@ -79,6 +83,29 @@ func deleteNewsItem(id int) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("news"))
 		return b.Delete(itob(id))
+	})
+}
+
+func editSettings(key string, value interface{}) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("settings"))
+		bytes, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		return b.Put([]byte(key), bytes)
+	})
+}
+
+func getSetting(key string, item interface{}) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		tx.CreateBucketIfNotExists([]byte("settings"))
+		b := tx.Bucket([]byte("settings"))
+		bytes := b.Get([]byte(key))
+		if len(bytes) == 0 {
+			return nil
+		}
+		return json.Unmarshal(bytes, &item)
 	})
 }
 
