@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Preloader, Col, Input, Button, Icon } from 'react-materialize'
 import { withRouter } from "react-router-dom";
-import { Editor } from 'react-draft-wysiwyg'
+import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertToRaw, ContentState  } from 'draft-js'
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
@@ -27,6 +27,7 @@ class NewsEdit extends Component {
         this.onEditorStateChange = this.onEditorStateChange.bind(this)
         this.save = this.save.bind(this)
         this.doneSaving = this.doneSaving.bind(this)
+        this.uploadImageCallBack = this.uploadImageCallBack.bind(this)
     }
 
     onGetNewsInfo(res) {
@@ -61,6 +62,30 @@ class NewsEdit extends Component {
         this.props.history.push("/news");
     }
 
+    // credit to https://github.com/jpuri/react-draft-wysiwyg/blob/master/stories/ImageUpload/index.js
+    uploadImageCallBack(file) {
+        const HOST = `http://${window.location.host}`
+        return new Promise(
+          (resolve, reject) => {
+            const xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
+            xhr.open('POST', `${HOST}/api/image`);
+            const data = new FormData(); // eslint-disable-line no-undef
+            data.append('image', file);
+            data.append('host', HOST);
+            xhr.send(data);
+            xhr.addEventListener('load', () => {
+              const response = JSON.parse(xhr.responseText);
+              console.log(response)
+              resolve({ data: response });
+            });
+            xhr.addEventListener('error', () => {
+              const error = JSON.parse(xhr.responseText);
+              reject(error);
+            });
+          },
+        );
+      }
+
     render() {
         if (this.state.loading) {
             return <Row><Col s={4} offset='s6'><Preloader size='big' flashing={true} /></Col></Row>
@@ -80,8 +105,18 @@ class NewsEdit extends Component {
                 editorClassName="editorClassName"
                 editorState={this.state.editorState}
                 onEditorStateChange={this.onEditorStateChange}
+                toolbar={{
+                    inline: { inDropdown: true },
+                    list: { inDropdown: true },
+                    textAlign: { inDropdown: true },
+                    link: { inDropdown: true },
+                    history: { inDropdown: true },
+                    image: { uploadCallback: this.uploadImageCallBack, alt: { present: false, mandatory: false },
+                    inputAccept: 'image/gif,image/jpeg,image/jpg,image/png,image/svg', },
+                }}
             />
             </Row>
+
             <Row>
                 <Col s={2}><Button waves='light' disabled={this.state.isSaving} onClick={this.save}>Opslaan<Icon left>save</Icon></Button></Col>
             </Row>
