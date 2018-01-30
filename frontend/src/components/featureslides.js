@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import { Row, Preloader, Col, Input, Button, Icon } from 'react-materialize'
 import { getEnabledFeatureSlides, setEnabledFeatureSlides } from '../apis/settings_api'
 
-const components = ["traffic", "social", "trains"]
+const components = ["traffic", "social", "trains", "keukendienst"]
 const componentNames = {
     "traffic": "Verkeer",
     "social": "Sociale Media",
     "trains": "Treinuren",
+    "keukendienst": "Keuken dienst",
 }
 
 class FeatureSlides extends Component {

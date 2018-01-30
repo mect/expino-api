@@ -42,6 +42,9 @@ func main() {
 
 	e.GET("/api/traffic", getTrafficHandler)
 
+	e.PUT("/api/keukendienst", setKeukendienst)
+	e.GET("/api/keukendienst", getKeukendienst)
+
 	e.POST("/api/image", uploadImage)
 	e.GET("/api/images/:name", getImage)
 

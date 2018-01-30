@@ -90,3 +90,26 @@ func getFeatureSlides(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, items)
 }
+
+func getKeukendienst(c echo.Context) error {
+	keukendienst := NewKeukendienst()
+
+	err := getSetting("keukendienst", &keukendienst)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, keukendienst)
+}
+
+func setKeukendienst(c echo.Context) error {
+	keukendienst := NewKeukendienst()
+	c.Bind(&keukendienst)
+	err := editSettings("keukendienst", keukendienst)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	go sendUpdate()
+	return c.JSON(http.StatusOK, keukendienst)
+}
