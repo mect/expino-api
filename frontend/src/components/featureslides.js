@@ -7,6 +7,7 @@ const componentNames = {
     "traffic": "Verkeer",
     "social": "Sociale Media",
     "trains": "Treinuren",
+    "keukendienst": "Keuken dienst",
 }
 
 class FeatureSlides extends Component {
