@@ -15,6 +15,8 @@ type Keukendienst struct {
 // NewKeukendienst gives a Keukendienst with the defaults set
 func NewKeukendienst() Keukendienst {
 	return Keukendienst{
-		Days: []string{"Maandag", "Dinsdag", "Woendsdag", "Donderdag", "Vrijdag"},
+		Days:    []string{"Maandag", "Dinsdag", "Woendsdag", "Donderdag", "Vrijdag"},
+		Tasks:   []string{},
+		Content: map[day]tasks{},
 	}
 }

@@ -8,6 +8,7 @@ import Home from './components/home'
 import NewsOverview from './components/newsoverview'
 import NewsEdit from './components/newsedit'
 import FeatureSlides from './components/featureslides'
+import KeukenDienst from './components/keukendienst'
 
 const App = function () {
     return (
@@ -20,6 +21,7 @@ const App = function () {
                     <Route path="/news" exact component={NewsOverview} />
                     <Route path="/news/edit/:id?" component={NewsEdit} />
                     <Route path="/featureslides" exact component={FeatureSlides}/>
+                    <Route path="/keukendienst" exact component={KeukenDienst}/>
                 </div>
                 <Footer />
             </div>

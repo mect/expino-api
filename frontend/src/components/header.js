@@ -8,6 +8,7 @@ export default () => {
             <li><NavLink to="/">Home</NavLink></li>
             <li><NavLink to="/news">Nieuws</NavLink></li>
             <li><NavLink to="/featureslides">Slides</NavLink></li>
+            <li><NavLink to="/keukendienst">Keuken dienst</NavLink></li>
         </Navbar>
     </Row>
 }
