@@ -42,6 +42,9 @@ func main() {
 
 	e.GET("/api/traffic", getTrafficHandler)
 
+	e.POST("/api/image", uploadImage)
+	e.GET("/api/images/:name", getImage)
+
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},

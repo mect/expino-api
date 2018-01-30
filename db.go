@@ -105,6 +105,25 @@ func getSetting(key string, item interface{}) error {
 	})
 }
 
+func saveFile(key string, content []byte) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		tx.CreateBucketIfNotExists([]byte("files"))
+		b := tx.Bucket([]byte("files"))
+		return b.Put([]byte(key), content)
+	})
+}
+
+func getFile(key string) (out []byte, err error) {
+	err = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("files"))
+		out = b.Get([]byte(key))
+
+		return nil
+	})
+
+	return
+}
+
 // itob returns an 8-byte big endian representation of v.
 // credit to https://github.com/boltdb/bolt
 func itob(v int) []byte {
