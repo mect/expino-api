@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Preloader, Col, Input, Button, Icon } from 'react-materialize'
 import { withRouter } from "react-router-dom";
-import { Editor } from 'react-draft-wysiwyg'
+import Editor from 'draft-js-plugins-editor';
 import { EditorState, convertToRaw, ContentState  } from 'draft-js'
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
@@ -77,6 +77,7 @@ class NewsEdit extends Component {
                 onEditorStateChange={this.onEditorStateChange}
             />
             </Row>
+
             <Row>
                 <Col s={2}><Button waves='light' disabled={this.state.isSaving} onClick={this.save}>Opslaan<Icon left>save</Icon></Button></Col>
             </Row>
