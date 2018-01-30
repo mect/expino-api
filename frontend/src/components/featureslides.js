@@ -23,6 +23,7 @@ class FeatureSlides extends Component {
 
     onFeatureSlides(res) {
         this.setState({ loading: false, componentsEnabled: res.data})
+        console.log(res.data)
     }
 
     save() {
@@ -47,7 +48,7 @@ class FeatureSlides extends Component {
             return <Row><Col s={4} offset='s6'><Preloader size='big' flashing={true} /></Col></Row>
         }
 
-        const options = components.map((i,k) => <Row key={k}><Input name={i} type='checkbox' value={i} label={componentNames[i]}  ref={(c) => this.checkboxes[i] = c} /></Row>)
+        const options = components.map((i,k) => <Row key={k}><Input name={i} type='checkbox' value={i} label={componentNames[i]}  ref={(c) => this.checkboxes[i] = c} checked={this.state.componentsEnabled.indexOf(i) > -1 ? true : false} /></Row>)
 
         return <div>
             <Row><h2>Slides</h2></Row>

@@ -48,6 +48,11 @@ class NewsEdit extends Component {
         const title = this.title.input.value
         const slideTime = parseInt(this.slideTime.input.value, 10)
 
+        if (!title) {
+            window.Materialize.toast('Vul een titel in', 4000)
+            return
+        }
+
         this.state.id === -1 ? addNews({ title, content, slideTime }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime }).then(this.doneSaving)
         this.setState({ isSaving: true })
     }
