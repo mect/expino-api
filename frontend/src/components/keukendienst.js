@@ -14,6 +14,7 @@ class KeukenDienst extends Component {
         this.save = this.save.bind(this)
         this.addTask = this.addTask.bind(this)
         this.setContent = this.setContent.bind(this)
+        this.deleteTask = this.deleteTask.bind(this)
     }
 
     onData(res) {
@@ -51,6 +52,17 @@ class KeukenDienst extends Component {
         this.content[day][task] = name
     }
 
+    deleteTask(task) {
+        const keukenDienst = this.state.keukenDienst
+        keukenDienst.tasks.splice(keukenDienst.tasks.indexOf(task),1)
+        for (let key in this.content) {
+            if (this.content.hasOwnProperty(key)) {
+                delete this.content[key][task]
+            }
+        }
+        this.setState({ keukenDienst })
+    }
+
     render() {
         if (this.state.loading) {
             return <Row><Col s={4} offset='s6'><Preloader size='big' flashing={true} /></Col></Row>
@@ -62,6 +74,7 @@ class KeukenDienst extends Component {
             <tr key={j}>
                 <th>{task}</th>
                 {this.state.keukenDienst.days.map((day, j) => <td key={j}><Input defaultValue={(this.state.keukenDienst.content[day] || {})[task]} onChange={(c) => this.setContent(day,task,c.target.value)} /></td>)}
+                <td><a onClick={() => this.deleteTask(task)}><Icon right>delete</Icon></a></td>
             </tr>
             )
         })
