@@ -42,6 +42,9 @@ func main() {
 
 	e.GET("/api/traffic", getTrafficHandler)
 
+	e.PUT("/api/keukendienst", setKeukendienst)
+	e.GET("/api/keukendienst", getKeukendienst)
+
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
