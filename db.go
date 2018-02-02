@@ -7,6 +7,16 @@ import (
 	bolt "github.com/coreos/bbolt"
 )
 
+func initDB() {
+	db.Update(func(tx *bolt.Tx) error {
+		tx.CreateBucketIfNotExists([]byte("news"))
+		tx.CreateBucketIfNotExists([]byte("settings"))
+		tx.CreateBucketIfNotExists([]byte("files"))
+
+		return nil
+	})
+}
+
 func getNewsItems() ([]NewsItem, error) {
 	items := []NewsItem{}
 
@@ -44,7 +54,6 @@ func getNewsItem(id int) (NewsItem, error) {
 
 func addNewsItem(item NewsItem) error {
 	return db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucket([]byte("news")) // to be sure
 		b := tx.Bucket([]byte("news"))
 
 		id, _ := b.NextSequence()
@@ -62,7 +71,6 @@ func addNewsItem(item NewsItem) error {
 
 func editNewsItem(item NewsItem) error {
 	return db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucket([]byte("news")) // to be sure
 		b := tx.Bucket([]byte("news"))
 
 		buf, err := json.Marshal(item)
@@ -94,8 +102,7 @@ func editSettings(key string, value interface{}) error {
 }
 
 func getSetting(key string, item interface{}) error {
-	return db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("settings"))
+	return db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("settings"))
 		bytes := b.Get([]byte(key))
 		if len(bytes) == 0 {
@@ -107,7 +114,6 @@ func getSetting(key string, item interface{}) error {
 
 func saveFile(key string, content []byte) error {
 	return db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("files"))
 		b := tx.Bucket([]byte("files"))
 		return b.Put([]byte(key), content)
 	})

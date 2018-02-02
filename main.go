@@ -21,6 +21,7 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
+	initDB()
 
 	io, _ = socketio.NewServer(nil)
 	io.On("connection", func(so socketio.Socket) {
