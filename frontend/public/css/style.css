@@ -6,3 +6,7 @@
     width:100%;
     padding-bottom:70px;
 }
+
+.minimumHeight{
+    min-height: 500px;
+}
