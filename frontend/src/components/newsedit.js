@@ -5,14 +5,30 @@ import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertToRaw, ContentState  } from 'draft-js'
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
+import DatePicker from 'react-datepicker'
+import moment from "moment";
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { getNews, editNews, addNews } from '../apis/news_api'
+
+const getToday = () => {
+    let date = new Date()
+    date.setUTCHours(0)
+    date.setUTCMinutes(0)
+    date.setUTCSeconds(0)
+    date.setUTCMilliseconds(0)
+
+    return date
+}
 
 class NewsEdit extends Component {
     constructor(props) {
         super(props)
-        this.state = { title: "", id:-1, loading: false, editorState: EditorState.createEmpty(), isSaving: false, slideTime: 10 }
+
+        this.from = getToday()
+        this.to = getToday()
+        this.state = { title: "", id:-1, loading: false, editorState: EditorState.createEmpty(), isSaving: false, slideTime: 10, from: getToday(), to: getToday()}
 
         if (this.props.match.params.id !== "new") {
             this.state.loading = true
@@ -28,13 +44,14 @@ class NewsEdit extends Component {
         this.save = this.save.bind(this)
         this.doneSaving = this.doneSaving.bind(this)
         this.uploadImageCallBack = this.uploadImageCallBack.bind(this)
+        this.setFromTime = this.setFromTime.bind(this)
+        this.setToTime = this.setToTime.bind(this)
     }
 
     onGetNewsInfo(res) {
         const contentBlock = htmlToDraft(res.data.content);
         const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-
-        this.setState({ loading: false, title: res.data.title, editorState: EditorState.createWithContent(contentState), slideTime: res.data.slideTime })
+        this.setState({ loading: false, title: res.data.title, editorState: EditorState.createWithContent(contentState), slideTime: res.data.slideTime, to: moment(new Date(res.data.to)), from: moment(new Date(res.data.from)) })
     }
 
     onEditorStateChange(editorState) {
@@ -53,13 +70,21 @@ class NewsEdit extends Component {
             return
         }
 
-        this.state.id === -1 ? addNews({ title, content, slideTime }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime }).then(this.doneSaving)
+        this.state.id === -1 ? addNews({ title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving)
         this.setState({ isSaving: true })
     }
 
     doneSaving() {
         this.setState({ isSaving: false })
         this.props.history.push("/news");
+    }
+
+    setToTime(date) {
+        this.setState({ to: date })
+    }
+
+    setFromTime(date) {
+        this.setState({ from: date })
     }
 
     // credit to https://github.com/jpuri/react-draft-wysiwyg/blob/master/stories/ImageUpload/index.js
@@ -93,7 +118,7 @@ class NewsEdit extends Component {
         return <div>
             <Row><h2>Nieuws artikel bewerken</h2></Row>
             <Row>
-	            <Input s={12} label="Titel" validate defaultValue={this.state.title} ref={(c) => this.title = c} />
+	            <Input s={12} id="test" label="Titel" validate defaultValue={this.state.title} ref={(c) => this.title = c} />
             </Row>
             <Row>
                 <Input type="number" label="Duur slide" s={4} defaultValue={this.state.slideTime} ref={(c) => this.slideTime = c} />
@@ -117,6 +142,13 @@ class NewsEdit extends Component {
             />
             </Row>
 
+            <Row>
+                <DatePicker label="Van" dateFormat="YYYY-MM-DD" selected={this.state.from} onChange={this.setFromTime}/>
+            </Row>
+            <Row>
+                <DatePicker label="Tot" dateFormat="YYYY-MM-DD" selected={this.state.to} onChange={this.setToTime}/>
+            </Row>
+            
             <Row>
                 <Col s={2}><Button waves='light' disabled={this.state.isSaving} onClick={this.save}>Opslaan<Icon left>save</Icon></Button></Col>
             </Row>

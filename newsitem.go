@@ -9,6 +9,8 @@ type NewsItem struct {
 	Content   string    `json:"content"`
 	Date      time.Time `json:"date"`
 	SlideTime int       `json:"slideTime"`
+	From      time.Time `json:"from"`
+	To        time.Time `json:"to"`
 }
 
 //NewNewsItem returns a new NewsItem with the defaults set

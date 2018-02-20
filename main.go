@@ -28,11 +28,15 @@ func main() {
 		so.Join("update")
 	})
 
+	setTimers()
+	go runTimers()
+
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Static("/", "frontend/build")
 
 	e.GET("/api/news", getAllNewsHandler)
+	e.GET("/api/news/current", getCurrentNewsHandler)
 	e.GET("/api/news/:id", getNewsHandler)
 	e.POST("/api/news", addNewsHandler)
 	e.PUT("/api/news", editNewsHandler)
