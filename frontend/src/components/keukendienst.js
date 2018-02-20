@@ -79,7 +79,7 @@ class KeukenDienst extends Component {
             )
         })
 
-        return <div>
+        return <div className="containerHeight">
             <Row><h2>Keuken Dienst</h2></Row>
 
             <Row>

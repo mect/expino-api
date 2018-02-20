@@ -27,12 +27,14 @@ class NewsEdit extends Component {
                 <Link to={`/news/edit/${i.id}`}>{i.title}</Link>
                 <a onClick={() => this.deleteItem(i.id)}><Icon right>delete</Icon></a>
             </CollectionItem>)
-        return <Row>
-        <Collection header='Nieuws items'>
-	        {items}
-        </Collection>
-        <Link to="/news/edit/new"><Button floating fab='vertical' icon='add' className='red' large style={{bottom: '45px', right: '24px'}}/></Link>
-    </Row>
+        return <div className="containerHeight">
+                <Row>
+                <Collection header='Nieuws items'>
+                    {items}
+                </Collection>
+                <Link to="/news/edit/new"><Button floating fab='vertical' icon='add' className='red' large style={{bottom: '45px', right: '24px'}}/></Link>
+                </Row>
+                </div>
     }
 }
 
