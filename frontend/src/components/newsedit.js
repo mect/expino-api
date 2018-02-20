@@ -19,15 +19,13 @@ const getToday = () => {
     date.setUTCSeconds(0)
     date.setUTCMilliseconds(0)
 
-    return date
+    return moment(date)
 }
 
 class NewsEdit extends Component {
     constructor(props) {
         super(props)
 
-        this.from = getToday()
-        this.to = getToday()
         this.state = { title: "", id:-1, loading: false, editorState: EditorState.createEmpty(), isSaving: false, slideTime: 10, from: getToday(), to: getToday()}
 
         if (this.props.match.params.id !== "new") {
@@ -70,7 +68,7 @@ class NewsEdit extends Component {
             return
         }
 
-        this.state.id === -1 ? addNews({ title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving)
+        this.state.id === -1 ? addNews({ title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime, from: this.state.from, to: this.state.to }).then(this.doneSaving)
         this.setState({ isSaving: true })
     }
 
@@ -84,6 +82,7 @@ class NewsEdit extends Component {
     }
 
     setFromTime(date) {
+        console.log(date)
         this.setState({ from: date })
     }
 
