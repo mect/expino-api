@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -28,6 +29,22 @@ func getAllNewsHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, news)
+}
+
+func getCurrentNewsHandler(c echo.Context) error {
+	news, err := getNewsItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	now := time.Now()
+	currentNews := []NewsItem{}
+	for _, item := range news {
+		if now.After(item.From.Truncate(time.Second)) && now.Before(item.To.Truncate(time.Second)) {
+			currentNews = append(currentNews, item)
+		}
+	}
+
+	return c.JSON(http.StatusOK, currentNews)
 }
 
 func addNewsHandler(c echo.Context) error {
@@ -77,6 +94,7 @@ func editFeatureSlides(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
+	setTimers()
 	go sendUpdate()
 	return c.JSON(http.StatusOK, items)
 }
@@ -112,4 +130,13 @@ func setKeukendienst(c echo.Context) error {
 
 	go sendUpdate()
 	return c.JSON(http.StatusOK, keukendienst)
+}
+
+func setTimers() {
+	resetTimers()
+	news, _ := getNewsItems()
+	for _, item := range news {
+		addTimer(item.From)
+		addTimer(item.To)
+	}
 }
