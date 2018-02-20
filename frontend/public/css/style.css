@@ -8,5 +8,9 @@
 }
 
 .minimumHeight{
-    min-height: 500px;
+        min-height: 500px;
+    }
+
+.marginBottom{
+    margin-bottom:100px;
 }
