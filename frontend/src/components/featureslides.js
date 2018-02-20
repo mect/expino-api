@@ -52,7 +52,7 @@ class FeatureSlides extends Component {
 
         const options = components.map((i,k) => <Row key={k}><Input name={i} type='checkbox' value={i} label={componentNames[i]}  ref={(c) => this.checkboxes[i] = c} checked={this.state.componentsEnabled.indexOf(i) > -1 ? true : false} /></Row>)
 
-        return <div>
+        return <div className="containerHeight">
             <Row><h2>Slides</h2></Row>
             {options}
             <Row>

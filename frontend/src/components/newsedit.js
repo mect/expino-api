@@ -114,7 +114,7 @@ class NewsEdit extends Component {
         if (this.state.loading) {
             return <Row><Col s={4} offset='s6'><Preloader size='big' flashing={true} /></Col></Row>
         }
-        return <div>
+        return <div className="marginBottom containerHeightNews">
             <Row><h2>Nieuws artikel bewerken</h2></Row>
             <Row>
 	            <Input s={12} id="test" label="Titel" validate defaultValue={this.state.title} ref={(c) => this.title = c} />
