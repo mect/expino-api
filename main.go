@@ -53,6 +53,10 @@ func main() {
 	e.POST("/api/image", uploadImage)
 	e.GET("/api/images/:name", getImage)
 
+	e.GET("/api/ticker", getTickerItemsHandler)
+	e.POST("/api/ticker", addTickerItemHandler)
+	e.DELETE("/api/ticker/:id", deleteTickerItemsHandler)
+
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
