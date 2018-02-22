@@ -10,7 +10,7 @@ class TickerEdit extends Component {
 
 
         this.state = { isSaving: false }
-        this.item = { setup: "", metric: "", interval: "10s", back: "10s" }
+        this.item = { name: "" , setup: "", metric: "", interval: "10s", back: "10s" }
 
         this.save = this.save.bind(this)
         this.doneSaving = this.doneSaving.bind(this)
@@ -30,6 +30,9 @@ class TickerEdit extends Component {
     render() {
         return <div className="marginBottom containerHeightNews">
             <Row><h2>Ticker item toevoegen</h2></Row>
+            <Row>
+	            <Input s={12} label="Naam" validate defaultValue={this.item.name} onChange={(c, value) => this.item.name = value} />
+            </Row>
             <Row>
 	            <Input s={12} label="Opstelling" validate defaultValue={this.item.setup} onChange={(c, value) => this.item.setup = value} />
             </Row>

@@ -24,7 +24,7 @@ class TickerItems extends Component {
 
     render() {
         const items = this.state.items.map(i => <CollectionItem>
-                {i.setup}: {i.metric}
+                {i.name} ({i.setup}: {i.metric})
                 <a onClick={() => this.deleteItem(i.id)}><Icon right>delete</Icon></a>
             </CollectionItem>)
         return <div className="containerHeight">
