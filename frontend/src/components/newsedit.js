@@ -68,7 +68,7 @@ class NewsEdit extends Component {
             return
         }
 
-        this.state.id === -1 ? addNews({ title, content, slideTime, from: this.from, to: this.to }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime, from: this.state.from, to: this.state.to }).then(this.doneSaving)
+        this.state.id === -1 ? addNews({ title, content, slideTime, from: this.state.from, to: this.state.to }).then(this.doneSaving) : editNews({ id: this.state.id, title, content, slideTime, from: this.state.from, to: this.state.to }).then(this.doneSaving)
         this.setState({ isSaving: true })
     }
 
