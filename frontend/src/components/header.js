@@ -9,6 +9,7 @@ export default () => {
             <li><NavLink to="/news">Nieuws</NavLink></li>
             <li><NavLink to="/featureslides">Slides</NavLink></li>
             <li><NavLink to="/ticker">Ticker</NavLink></li>
+            <li><NavLink to="/graphs">Grafana</NavLink></li>
         </Navbar>
     </Row>
 }
