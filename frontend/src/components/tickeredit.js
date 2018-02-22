@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Preloader, Col, Input, Button, Icon } from 'react-materialize'
+import { Row, Col, Input, Button, Icon } from 'react-materialize'
 import { withRouter } from "react-router-dom";
 
 import { addTickerItem } from '../apis/ticker_api'
