@@ -19,7 +19,7 @@ class TickerEdit extends Component {
 
     save() {
         this.setState({ isSaving: false })
-        addTickerItem({ setup: this.item.setup, metric: this.item.metric, interval: this.item.interval, back: this.item.back }).then(this.doneSaving)
+        addTickerItem({ name: this.item.name, setup: this.item.setup, metric: this.item.metric, interval: this.item.interval, back: this.item.back }).then(this.doneSaving)
     }
 
     doneSaving() {
