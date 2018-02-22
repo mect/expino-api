@@ -144,7 +144,16 @@ func getTickerItemsHandler(c echo.Context) error {
 func addTickerItemHandler(c echo.Context) error {
 	item := TickerItem{}
 	c.Bind(&item)
-	err := addTickerItem(item)
+	_, err := time.ParseDuration(item.Back)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	_, err = time.ParseDuration(item.Interval)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	err = addTickerItem(item)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
