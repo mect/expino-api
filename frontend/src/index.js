@@ -9,6 +9,8 @@ import NewsOverview from './components/newsoverview'
 import NewsEdit from './components/newsedit'
 import FeatureSlides from './components/featureslides'
 import KeukenDienst from './components/keukendienst'
+import TickerItems from './components/tickeritems';
+import TickerEdit from './components/tickeredit'
 
 const App = function () {
     return (
@@ -22,6 +24,8 @@ const App = function () {
                     <Route path="/news/edit/:id?" component={NewsEdit} />
                     <Route path="/featureslides" exact component={FeatureSlides}/>
                     <Route path="/keukendienst" exact component={KeukenDienst}/>
+                    <Route path="/ticker" exact component={TickerItems} />
+                    <Route path="/ticker/new" exact component={TickerEdit} />
                 </div>
                 <Footer />
             </div>

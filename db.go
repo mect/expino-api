@@ -12,6 +12,7 @@ func initDB() {
 		tx.CreateBucketIfNotExists([]byte("news"))
 		tx.CreateBucketIfNotExists([]byte("settings"))
 		tx.CreateBucketIfNotExists([]byte("files"))
+		tx.CreateBucketIfNotExists([]byte("ticker"))
 
 		return nil
 	})
@@ -128,6 +129,50 @@ func getFile(key string) (out []byte, err error) {
 	})
 
 	return
+}
+
+func getTickerItems() ([]TickerItem, error) {
+	items := []TickerItem{}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("ticker"))
+
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			item := TickerItem{}
+			json.Unmarshal(v, &item)
+			items = append(items, item)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return items, err
+}
+
+func addTickerItem(item TickerItem) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("ticker"))
+
+		id, _ := b.NextSequence()
+		item.ID = int(id)
+
+		buf, err := json.Marshal(item)
+		if err != nil {
+			return err
+		}
+
+		// Persist bytes to users bucket.
+		return b.Put(itob(item.ID), buf)
+	})
+}
+
+func deleteTickerItem(id int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("ticker"))
+		return b.Delete(itob(id))
+	})
 }
 
 // itob returns an 8-byte big endian representation of v.
