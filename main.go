@@ -57,6 +57,10 @@ func main() {
 	e.POST("/api/ticker", addTickerItemHandler)
 	e.DELETE("/api/ticker/:id", deleteTickerItemsHandler)
 
+	e.GET("/api/graphs", getGraphItemsHandler)
+	e.POST("/api/graphs", addGraphItemHandler)
+	e.DELETE("/api/graphs/:id", deleteGraphItemsHandler)
+
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},

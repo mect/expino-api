@@ -11,6 +11,8 @@ import FeatureSlides from './components/featureslides'
 import KeukenDienst from './components/keukendienst'
 import TickerItems from './components/tickeritems';
 import TickerEdit from './components/tickeredit'
+import GraphItems from './components/graphitems'
+import GraphEdit from './components/graphedit'
 
 const App = function () {
     return (
@@ -26,6 +28,8 @@ const App = function () {
                     <Route path="/keukendienst" exact component={KeukenDienst}/>
                     <Route path="/ticker" exact component={TickerItems} />
                     <Route path="/ticker/new" exact component={TickerEdit} />
+                    <Route path="/graphs" exact component={GraphItems} />
+                    <Route path="/graphs/new" exact component={GraphEdit} />
                 </div>
                 <Footer />
             </div>

@@ -13,6 +13,7 @@ func initDB() {
 		tx.CreateBucketIfNotExists([]byte("settings"))
 		tx.CreateBucketIfNotExists([]byte("files"))
 		tx.CreateBucketIfNotExists([]byte("ticker"))
+		tx.CreateBucketIfNotExists([]byte("graphs"))
 
 		return nil
 	})
@@ -171,6 +172,50 @@ func addTickerItem(item TickerItem) error {
 func deleteTickerItem(id int) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("ticker"))
+		return b.Delete(itob(id))
+	})
+}
+
+func getGraphItems() ([]GraphItem, error) {
+	items := []GraphItem{}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("graphs"))
+
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			item := GraphItem{}
+			json.Unmarshal(v, &item)
+			items = append(items, item)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return items, err
+}
+
+func addGraphItem(item GraphItem) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("graphs"))
+
+		id, _ := b.NextSequence()
+		item.ID = int(id)
+
+		buf, err := json.Marshal(item)
+		if err != nil {
+			return err
+		}
+
+		// Persist bytes to users bucket.
+		return b.Put(itob(item.ID), buf)
+	})
+}
+
+func deleteGraphItem(id int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("graphs"))
 		return b.Delete(itob(id))
 	})
 }

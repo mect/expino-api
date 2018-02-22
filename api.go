@@ -177,6 +177,42 @@ func deleteTickerItemsHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 }
 
+func getGraphItemsHandler(c echo.Context) error {
+	items, err := getGraphItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, items)
+}
+
+func addGraphItemHandler(c echo.Context) error {
+	item := GraphItem{}
+	c.Bind(&item)
+	err := addGraphItem(item)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	go sendUpdate()
+	return c.JSON(http.StatusOK, item)
+}
+
+func deleteGraphItemsHandler(c echo.Context) error {
+	i, err := strconv.ParseInt(c.Param("id"), 10, 32)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	err = deleteGraphItem(int(i))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	go sendUpdate()
+	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+}
+
 func setTimers() {
 	resetTimers()
 	news, _ := getNewsItems()
