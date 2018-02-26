@@ -59,6 +59,7 @@ func main() {
 	e.DELETE("/api/graphs/:id", deleteGraphItemsHandler)
 
 	e.GET("/api/keukendienst", getKeukenDienstItemsHandler)
+	e.GET("/api/keukendienst/current", getCurrentKeukenDienstItemHandler)
 	e.POST("/api/keukendienst", addKeukenDienstItemsHandler)
 	e.DELETE("/api/keukendienst/:id", deleteKeukenDienstItemsHandler)
 

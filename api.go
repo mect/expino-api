@@ -224,6 +224,22 @@ func deleteKeukenDienstItemsHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 }
 
+func getCurrentKeukenDienstItemHandler(c echo.Context) error {
+	news, err := getKeukenDienstItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	now := time.Now()
+	current := KeukendienstItem{}
+	for _, item := range news {
+		if now.After(item.From.Truncate(time.Second)) && now.Before(item.To.Truncate(time.Second)) {
+			current = item
+		}
+	}
+
+	return c.JSON(http.StatusOK, current)
+}
+
 func setTimers() {
 	resetTimers()
 	news, _ := getNewsItems()
