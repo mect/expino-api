@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import { Row, Preloader, Col, Input, Button, Icon, Table } from 'react-materialize'
 import { getKeukendienst, setKeukendienst } from '../apis/keukendienst_api'
+import DatePicker from 'react-datepicker'
+import moment from "moment";
+import 'react-datepicker/dist/react-datepicker.css';
+import '../css/picker.css'
 
 class KeukenDienst extends Component {
-    content = {}
 
     constructor(props) {
         super(props)
@@ -12,54 +15,63 @@ class KeukenDienst extends Component {
         getKeukendienst().then(this.onData.bind(this))
 
         this.save = this.save.bind(this)
-        this.addTask = this.addTask.bind(this)
-        this.setContent = this.setContent.bind(this)
+        this.addWeek = this.addWeek.bind(this)
+        this.setFromTime = this.setFromTime.bind(this)
+        this.setToTime = this.setToTime.bind(this)
         this.deleteTask = this.deleteTask.bind(this)
+        this.setName = this.setName.bind(this)
     }
 
     onData(res) {
+        for (let id in res.data) {
+            res.data[id].from = moment(res.data[id].from)
+            res.data[id].to = moment(res.data[id].to)
+        }
         this.setState({ loading: false, keukenDienst: res.data})
-        this.content = res.data.content
         console.log(res.data)
     }
 
     save() {
-        const keukenDienst = this.state.keukenDienst
-        keukenDienst.content = this.content
-        this.setState({ keukenDienst, isSaving: true })
-        setKeukendienst(keukenDienst).then(this.onDoneSave.bind(this))
+        this.setState({ isSaving: true })
+        setKeukendienst(this.state.keukenDienst).then(this.onDoneSave.bind(this))
     }
 
     onDoneSave() {
         this.setState({ isSaving: false })
     }
 
-    addTask() {
+    setFromTime(i, content) {
+        console.log(i, content)
         const keukenDienst = this.state.keukenDienst
-        if (!this.newTask.input.value) {
-            return
-        }
-        keukenDienst.tasks.push(this.newTask.input.value)
-        this.newTask.input.value = ""
+        console.log(keukenDienst)
+        keukenDienst[i].from = content
+        console.log(keukenDienst)
+        this.setState({ keukenDienst })
+    }
+
+    setToTime(i, content) {
+        const keukenDienst = this.state.keukenDienst
+        keukenDienst[i].to = content
+        this.setState({ keukenDienst })
+    }
+
+    setName(i, j, name) {
+        console.log(i, j, name)
+        const keukenDienst = this.state.keukenDienst
+        keukenDienst[i].names[j] = name
+        this.setState({ keukenDienst })
+    }
+
+    addWeek() {
+        const keukenDienst = this.state.keukenDienst
+        keukenDienst.push({from: moment(new Date()), to: moment(new Date()), names:["", ""]})
 
         this.setState({ keukenDienst })
     }
 
-    setContent(day,task,name) {
-        if (!this.content[day]) {
-            this.content[day] = {}
-        }
-        this.content[day][task] = name
-    }
-
-    deleteTask(task) {
+    deleteTask(i) {
         const keukenDienst = this.state.keukenDienst
-        keukenDienst.tasks.splice(keukenDienst.tasks.indexOf(task),1)
-        for (let key in this.content) {
-            if (this.content.hasOwnProperty(key)) {
-                delete this.content[key][task]
-            }
-        }
+        keukenDienst.splice(i, 1)
         this.setState({ keukenDienst })
     }
 
@@ -68,34 +80,36 @@ class KeukenDienst extends Component {
             return <Row><Col s={4} offset='s6'><Preloader size='big' flashing={true} /></Col></Row>
         }
 
-        const days = this.state.keukenDienst.days.map((i,j) => <th key={j}>{i}</th>)
-        const rows = this.state.keukenDienst.tasks.map((task,j) => {
+        const rows = this.state.keukenDienst.map((task,j) => {
             return (
             <tr key={j}>
-                <th>{task}</th>
-                {this.state.keukenDienst.days.map((day, j) => <td key={j}><Input defaultValue={(this.state.keukenDienst.content[day] || {})[task]} onChange={(c) => this.setContent(day,task,c.target.value)} /></td>)}
-                <td><a onClick={() => this.deleteTask(task)}><Icon right>delete</Icon></a></td>
+                <td><DatePicker label="Van" dateFormat="YYYY-MM-DD" selected={task.from} onChange={(c) => this.setFromTime(j, c)}/></td>
+                <td><DatePicker label="Tot" dateFormat="YYYY-MM-DD" selected={task.to} onChange={(c) => this.setToTime(j, c)}/></td>
+                <td><Input label="Naam 1" validate defaultValue={task.names[0]} onChange={(i, c) => this.setName(j, 0, c)}/></td>
+                <td><Input label="Naam 2" validate defaultValue={task.names[1]} onChange={(i, c) => this.setName(j, 1, c)}/></td>
+                <td><a onClick={() => this.deleteTask(j)}><Icon right>delete</Icon></a></td>
             </tr>
             )
         })
 
         return <div className="containerHeight">
             <Row><h2>Keuken Dienst</h2></Row>
-
             <Row>
                 <Table>
 	                <thead>
 		                <tr>
-                            <th></th>
-                            {days}
+                            <th>Van</th>
+                            <th>Tot</th>
+                            <th>Naam 1</th>
+                            <th>Naam 2</th>
+                            <th/>
                         </tr>
 	                </thead>
                     <tbody>
                         {rows}
                         <tr>
                             <td>
-                                <Input label="Nieuwe Taak" ref={(c) => this.newTask = c} validate/>
-                                <Button waves='light' onClick={this.addTask} icon="add" floating/>
+                                <Button waves='light' onClick={this.addWeek} icon="add" floating/>
                             </td>
                         </tr>
                     </tbody>

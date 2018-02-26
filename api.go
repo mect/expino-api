@@ -109,29 +109,6 @@ func getFeatureSlides(c echo.Context) error {
 	return c.JSON(http.StatusOK, items)
 }
 
-func getKeukendienst(c echo.Context) error {
-	keukendienst := NewKeukendienst()
-
-	err := getSetting("keukendienst", &keukendienst)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, keukendienst)
-}
-
-func setKeukendienst(c echo.Context) error {
-	keukendienst := NewKeukendienst()
-	c.Bind(&keukendienst)
-	err := editSettings("keukendienst", keukendienst)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	go sendUpdate()
-	return c.JSON(http.StatusOK, keukendienst)
-}
-
 func getTickerItemsHandler(c echo.Context) error {
 	items, err := getTickerItems()
 	if err != nil {
@@ -211,6 +188,42 @@ func deleteGraphItemsHandler(c echo.Context) error {
 
 	go sendUpdate()
 	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func getKeukenDienstItemsHandler(c echo.Context) error {
+	items, err := getKeukenDienstItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, items)
+}
+
+func setKeukenDienstItemsHandler(c echo.Context) error {
+	items := []KeukendienstItem{}
+	c.Bind(&items)
+	err := setKeukenDienstItems(items)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, items)
+}
+
+func getCurrentKeukenDienstItemHandler(c echo.Context) error {
+	news, err := getKeukenDienstItems()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	now := time.Now()
+	current := KeukendienstItem{}
+	for _, item := range news {
+		if now.After(item.From.Truncate(time.Second)) && now.Before(item.To.Truncate(time.Second)) {
+			current = item
+		}
+	}
+
+	return c.JSON(http.StatusOK, current)
 }
 
 func setTimers() {

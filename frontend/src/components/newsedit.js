@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker'
 import moment from "moment";
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import 'react-datepicker/dist/react-datepicker.css';
+import '../css/picker.css'
 
 import { getNews, editNews, addNews } from '../apis/news_api'
 

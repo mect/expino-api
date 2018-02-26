@@ -176,6 +176,34 @@ func deleteTickerItem(id int) error {
 	})
 }
 
+func getKeukenDienstItems() ([]KeukendienstItem, error) {
+	items := []KeukendienstItem{}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("settings"))
+
+		data := b.Get([]byte("keukendienst"))
+		json.Unmarshal(data, &items)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return items, err
+}
+
+func setKeukenDienstItems(items []KeukendienstItem) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("settings"))
+
+		buf, err := json.Marshal(items)
+		if err != nil {
+			return err
+		}
+		return b.Put([]byte("keukendienst"), buf)
+	})
+}
+
 func getGraphItems() ([]GraphItem, error) {
 	items := []GraphItem{}
 

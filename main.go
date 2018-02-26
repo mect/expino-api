@@ -47,9 +47,6 @@ func main() {
 
 	e.GET("/api/traffic", getTrafficHandler)
 
-	e.PUT("/api/keukendienst", setKeukendienst)
-	e.GET("/api/keukendienst", getKeukendienst)
-
 	e.POST("/api/image", uploadImage)
 	e.GET("/api/images/:name", getImage)
 
@@ -60,6 +57,10 @@ func main() {
 	e.GET("/api/graphs", getGraphItemsHandler)
 	e.POST("/api/graphs", addGraphItemHandler)
 	e.DELETE("/api/graphs/:id", deleteGraphItemsHandler)
+
+	e.GET("/api/keukendienst", getKeukenDienstItemsHandler)
+	e.GET("/api/keukendienst/current", getCurrentKeukenDienstItemHandler)
+	e.PUT("/api/keukendienst", setKeukenDienstItemsHandler)
 
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{
