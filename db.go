@@ -14,6 +14,7 @@ func initDB() {
 		tx.CreateBucketIfNotExists([]byte("files"))
 		tx.CreateBucketIfNotExists([]byte("ticker"))
 		tx.CreateBucketIfNotExists([]byte("graphs"))
+		tx.CreateBucketIfNotExists([]byte("keukendienst"))
 
 		return nil
 	})
@@ -172,6 +173,50 @@ func addTickerItem(item TickerItem) error {
 func deleteTickerItem(id int) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("ticker"))
+		return b.Delete(itob(id))
+	})
+}
+
+func getKeukenDienstItems() ([]KeukendienstItem, error) {
+	items := []KeukendienstItem{}
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("keukendienst"))
+
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			item := KeukendienstItem{}
+			json.Unmarshal(v, &item)
+			items = append(items, item)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return items, err
+}
+
+func addKeukenDienstItems(item KeukendienstItem) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("keukendienst"))
+
+		id, _ := b.NextSequence()
+		item.ID = int(id)
+
+		buf, err := json.Marshal(item)
+		if err != nil {
+			return err
+		}
+
+		// Persist bytes to users bucket.
+		return b.Put(itob(item.ID), buf)
+	})
+}
+
+func deleteKeukenDienstItems(id int) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("keukendienst"))
 		return b.Delete(itob(id))
 	})
 }
