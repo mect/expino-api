@@ -199,29 +199,15 @@ func getKeukenDienstItemsHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, items)
 }
 
-func addKeukenDienstItemsHandler(c echo.Context) error {
-	item := KeukendienstItem{}
-	c.Bind(&item)
-	err := addKeukenDienstItems(item)
+func setKeukenDienstItemsHandler(c echo.Context) error {
+	items := []KeukendienstItem{}
+	c.Bind(&items)
+	err := setKeukenDienstItems(items)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, item)
-}
-
-func deleteKeukenDienstItemsHandler(c echo.Context) error {
-	i, err := strconv.ParseInt(c.Param("id"), 10, 32)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	err = deleteKeukenDienstItems(int(i))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+	return c.JSON(http.StatusOK, items)
 }
 
 func getCurrentKeukenDienstItemHandler(c echo.Context) error {

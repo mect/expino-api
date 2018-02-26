@@ -14,7 +14,6 @@ func initDB() {
 		tx.CreateBucketIfNotExists([]byte("files"))
 		tx.CreateBucketIfNotExists([]byte("ticker"))
 		tx.CreateBucketIfNotExists([]byte("graphs"))
-		tx.CreateBucketIfNotExists([]byte("keukendienst"))
 
 		return nil
 	})
@@ -181,14 +180,10 @@ func getKeukenDienstItems() ([]KeukendienstItem, error) {
 	items := []KeukendienstItem{}
 
 	err := db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("keukendienst"))
+		b := tx.Bucket([]byte("settings"))
 
-		c := b.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			item := KeukendienstItem{}
-			json.Unmarshal(v, &item)
-			items = append(items, item)
-		}
+		data := b.Get([]byte("keukendienst"))
+		json.Unmarshal(data, &items)
 		return nil
 	})
 	if err != nil {
@@ -197,27 +192,15 @@ func getKeukenDienstItems() ([]KeukendienstItem, error) {
 	return items, err
 }
 
-func addKeukenDienstItems(item KeukendienstItem) error {
+func setKeukenDienstItems(items []KeukendienstItem) error {
 	return db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("keukendienst"))
+		b := tx.Bucket([]byte("settings"))
 
-		id, _ := b.NextSequence()
-		item.ID = int(id)
-
-		buf, err := json.Marshal(item)
+		buf, err := json.Marshal(items)
 		if err != nil {
 			return err
 		}
-
-		// Persist bytes to users bucket.
-		return b.Put(itob(item.ID), buf)
-	})
-}
-
-func deleteKeukenDienstItems(id int) error {
-	return db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("keukendienst"))
-		return b.Delete(itob(id))
+		return b.Put([]byte("keukendienst"), buf)
 	})
 }
 

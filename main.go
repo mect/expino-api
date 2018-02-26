@@ -60,8 +60,7 @@ func main() {
 
 	e.GET("/api/keukendienst", getKeukenDienstItemsHandler)
 	e.GET("/api/keukendienst/current", getCurrentKeukenDienstItemHandler)
-	e.POST("/api/keukendienst", addKeukenDienstItemsHandler)
-	e.DELETE("/api/keukendienst/:id", deleteKeukenDienstItemsHandler)
+	e.PUT("/api/keukendienst", setKeukenDienstItemsHandler)
 
 	http.Handle("/", e)
 	http.Handle("/socket.io/", cors.New(cors.Options{

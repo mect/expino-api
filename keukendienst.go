@@ -9,7 +9,6 @@ type tasks map[task]name
 
 // KeukendienstItem contains for a a period of keukendienst slide
 type KeukendienstItem struct {
-	ID    int       `json:"id"`
 	From  time.Time `json:"from"`
 	To    time.Time `json:"to"`
 	Names []string  `json:"names"`
