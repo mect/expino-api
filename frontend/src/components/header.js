@@ -11,6 +11,7 @@ export default () => {
             <li><NavLink to="/ticker">Ticker</NavLink></li>
             <li><NavLink to="/graphs">Grafana</NavLink></li>
             <li><NavLink to="/keukendienst">Keukendienst</NavLink></li>
+            <li><a target="_bland" href="http://projecten.dirkmervis.be/expino/Handleiding.pdf" >Help</a></li>
         </Navbar>
     </Row>
 }
