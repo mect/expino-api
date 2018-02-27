@@ -29,6 +29,9 @@ class GraphItems extends Component {
             </CollectionItem>)
         return <div className="containerHeight">
                 <Row>
+                    <Button waves='light' node='a' href={`http://${window.location.hostname}:8000`} target="_blank"> Ga naar Grafana </Button>
+                </Row>
+                <Row>
                 <Collection header='Grafana items'>
                     {items}
                 </Collection>
