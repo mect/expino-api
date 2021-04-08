@@ -11,6 +11,7 @@ RUN apk add --no-cache ca-certificates
 
 COPY --from=build /go/src/github.com/mect/expino-api/expino-api /usr/local/bin/expino-api
 
-RUN mkdir expino-static
+RUN mkdir -p /opt/expino/expino-static
+WORKDIR /opt/expino/
 
 CMD ["/usr/local/bin/expino-api", "serve"]
