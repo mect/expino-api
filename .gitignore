@@ -1,7 +1,6 @@
 /bindata.go
+/expino-api
+.idea/
+.envrc
+expino-static/
 node_modules/
-/frontend/build
-/abcboard
-/test.mp3
-backend.db
-/expino-backend

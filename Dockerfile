@@ -1,13 +1,16 @@
-ARG arch
-FROM multiarch/alpine:${arch}-edge
+FROM golang:1.16-alpine as build
 
-RUN mkdir -p /opt/kiosk/expino-backend/frontend/build
+COPY ./ /go/src/github.com/mect/expino-api
+WORKDIR /go/src/github.com/mect/expino-api
 
-WORKDIR /opt/kiosk
+RUN go build ./cmd/expino-api
 
-COPY ./expino-backend /opt/kiosk/expino-backend
-COPY ./frontend/build /opt/kiosk/frontend/build
+FROM alpine:3.13
 
-EXPOSE 8080
+RUN apk add --no-cache ca-certificates
 
-CMD /opt/kiosk/expino-backend/expino-backend
+COPY --from=build /go/src/github.com/mect/expino-api/expino-api /usr/local/bin/expino-api
+
+RUN mkdir expino-static
+
+CMD ["/usr/local/bin/expino-api", "serve"]
