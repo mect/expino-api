@@ -13,6 +13,9 @@ type NewsItem struct {
 	To            *time.Time         `json:"to"`
 	LanguageItems []NewsLanguageItem `json:"languageItems"`
 	SlideTime     int                `json:"slideTime"`
+	Order         int                `json:"order"`
+	Display       Display            `json:"display"`
+	DisplayID     int                `json:"displayID"`
 }
 
 type NewsLanguageItem struct {

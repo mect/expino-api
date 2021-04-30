@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/mect/expino-api/pkg/api/display"
 
 	socketio "github.com/googollee/go-socket.io"
@@ -22,6 +24,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/net/websocket"
 
 	"github.com/mect/expino-api/pkg/api/auth"
 	v1 "github.com/mect/expino-api/pkg/api/v1"
@@ -52,11 +55,15 @@ type serveCmdOptions struct {
 	postgresUsername string
 	postgresDatabase string
 	postgresPassword string
+
+	wsClients map[string]chan string
 }
 
 // NewServeCmd generates the `serve` command
 func NewServeCmd() *cobra.Command {
-	s := serveCmdOptions{}
+	s := serveCmdOptions{
+		wsClients: map[string]chan string{},
+	}
 	c := &cobra.Command{
 		Use:     "serve",
 		Short:   "Serves the HTTP REST endpoint",
@@ -111,22 +118,13 @@ func (s *serveCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	e := echo.New()
-	io, err = socketio.NewServer(nil)
-	if err != nil {
-		return err
-	}
-
-	io.OnConnect("/", func(conn socketio.Conn) error {
-		conn.Join("updates")
-		return nil
-	})
 
 	e.HideBanner = true
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper: func(c echo.Context) bool {
-			if strings.HasPrefix(c.Path(), "/socket.io/") {
+			if strings.HasPrefix(c.Path(), "/ws/") {
 				return true
 			}
 			return false
@@ -154,13 +152,13 @@ func (s *serveCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 		return c.String(http.StatusOK, "Expino API endpoint")
 	})
 
-	e.Any("/socket.io/", echo.WrapHandler(io))
+	e.Any("/ws", s.serveWs)
 
 	http.Handle("/", e)
 
 	e.POST("/login", s.login)
 	e.Static("/static", "expino-static")
-	v1.NewHTTPHandler(s.db, io).Register(e)
+	v1.NewHTTPHandler(s.db, s.sendBroadcast).Register(e)
 	display.NewHTTPHandler(s.db).Register(e)
 
 	go func() {
@@ -245,4 +243,35 @@ func socketioCORS(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		return next(c)
 	}
+}
+
+func (s *serveCmdOptions) sendBroadcast(data string) {
+	for _, ch := range s.wsClients {
+		go func() {
+			ch <- data
+		}()
+	}
+}
+
+func (s *serveCmdOptions) serveWs(c echo.Context) error {
+	websocket.Handler(func(ws *websocket.Conn) {
+		defer ws.Close()
+
+		id := uuid.New().String()
+
+		updates := make(chan string)
+		s.wsClients[id] = updates
+
+		for {
+			u := <-updates
+			// Write
+			err := websocket.Message.Send(ws, u)
+			if err != nil {
+				c.Logger().Error(err)
+				delete(s.wsClients, id)
+				break
+			}
+		}
+	}).ServeHTTP(c.Response(), c.Request())
+	return nil
 }

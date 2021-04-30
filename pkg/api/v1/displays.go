@@ -13,49 +13,47 @@ import (
 	"github.com/mect/expino-api/pkg/db"
 )
 
-func (h *HTTPHandler) handleNewsList(c echo.Context) error {
-	var newsItems []db.NewsItem
-	res := h.db.Preload(clause.Associations).Order("\"order\",id").Find(&newsItems)
+func (h *HTTPHandler) handleDisplayList(c echo.Context) error {
+	var displays []db.Display
+	res := h.db.Preload(clause.Associations).Order("id").Find(&displays)
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error reading data: %v", res.Error)})
 	}
 
-	return c.JSON(http.StatusOK, newsItems)
+	return c.JSON(http.StatusOK, displays)
 }
 
-func (h *HTTPHandler) handleNewsGet(c echo.Context) error {
-	newsItem := &db.NewsItem{}
-	res := h.db.Preload(clause.Associations).First(newsItem, "id = ?", c.Param("id"))
+func (h *HTTPHandler) handleDisplayGet(c echo.Context) error {
+	display := &db.Display{}
+	res := h.db.Preload(clause.Associations).First(display, "id = ?", c.Param("id"))
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error reading data: %v", res.Error)})
 	}
 
-	return c.JSON(http.StatusOK, newsItem)
+	return c.JSON(http.StatusOK, display)
 }
 
-func (h *HTTPHandler) handleNewsCreate(c echo.Context) error {
-	newsItem := &db.NewsItem{}
-	err := c.Bind(newsItem)
+func (h *HTTPHandler) handleDisplayCreate(c echo.Context) error {
+	display := &db.Display{}
+	err := c.Bind(display)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error reading data: %v", err)})
 	}
 
-	newsItem.ID = 0
+	display.ID = 0
 
-	res := h.db.Create(newsItem)
+	res := h.db.Create(display)
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
 	}
 
-	h.broadcastUpdate()
-
-	return c.JSON(http.StatusOK, newsItem)
+	return c.JSON(http.StatusOK, display)
 }
 
-func (h *HTTPHandler) handleNewsUpdate(c echo.Context) error {
-	newsItem := &db.NewsItem{}
-	err := c.Bind(newsItem)
+func (h *HTTPHandler) handleDisplayUpdate(c echo.Context) error {
+	display := &db.Display{}
+	err := c.Bind(display)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error reading data: %v", err)})
@@ -67,32 +65,17 @@ func (h *HTTPHandler) handleNewsUpdate(c echo.Context) error {
 	} else if id < 0 {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "ID cannot be negative"})
 	}
-	newsItem.ID = uint(id)
+	display.ID = uint(id)
 
-	res := h.db.Save(newsItem)
+	res := h.db.Save(display)
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
 	}
 
-	err = h.db.Model(&newsItem).Association("LanguageItems").Replace(&newsItem.LanguageItems)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
-
-	}
-
-	for _, langItem := range newsItem.LanguageItems {
-		res := h.db.Save(&langItem)
-		if res.Error != nil {
-			return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
-		}
-	}
-
-	h.broadcastUpdate()
-
-	return c.JSON(http.StatusOK, newsItem)
+	return c.JSON(http.StatusOK, display)
 }
 
-func (h *HTTPHandler) handleNewsDelete(c echo.Context) error {
+func (h *HTTPHandler) handleDisplayDelete(c echo.Context) error {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": fmt.Sprintf("error reading ID: %v", err)})
@@ -100,7 +83,7 @@ func (h *HTTPHandler) handleNewsDelete(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "ID cannot be negative"})
 	}
 
-	res := h.db.Delete(&db.NewsItem{
+	res := h.db.Delete(&db.Display{
 		Model: gorm.Model{
 			ID: uint(id),
 		},
@@ -108,8 +91,6 @@ func (h *HTTPHandler) handleNewsDelete(c echo.Context) error {
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error deleting data: %v", res.Error)})
 	}
-
-	h.broadcastUpdate()
 
 	return c.JSON(http.StatusOK, echo.Map{"status": "ok"})
 }
