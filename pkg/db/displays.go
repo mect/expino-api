@@ -6,6 +6,8 @@ import (
 
 type Display struct {
 	gorm.Model
-	Name  string `json:"name"`
-	Token string `json:"token"`
+	Name       string `json:"name"`
+	Token      string `json:"token"`
+	TickerRSS  string `json:"tickerRSS"`
+	TickerText string `json:"tickerText"`
 }

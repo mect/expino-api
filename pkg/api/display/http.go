@@ -19,6 +19,7 @@ func NewHTTPHandler(db *db.Connection) *HTTPHandler {
 func (h *HTTPHandler) Register(e *echo.Echo) {
 	e.Use(h.checkAuth)
 
+	e.GET("/display", h.handleDisplay)
 	e.GET("/display/news", h.handleNewsList)
 	e.GET("/display/rss", h.handleRss)
 }
