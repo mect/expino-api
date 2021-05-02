@@ -133,6 +133,7 @@ func (s *serveCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 	e.Use(socketioCORS)
+	e.Use(cacheStatic)
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(s.jwtSecret),
 		Claims:     &auth.Claim{},
@@ -240,6 +241,17 @@ func socketioCORS(next echo.HandlerFunc) echo.HandlerFunc {
 				c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
 				c.Response().Header().Set("Access-Control-Allow-Origin", origin)
 			}
+		}
+		return next(c)
+	}
+}
+
+func cacheStatic(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if strings.HasPrefix(c.Path(), "/static/") {
+			c.Response().Header().Set("Cache-Control", "max-age:290304000, public")
+			c.Response().Header().Set("Last-Modified", time.Now().Format(http.TimeFormat))
+			c.Response().Header().Set("Expires", time.Now().AddDate(60, 0, 0).Format(http.TimeFormat)) // we use SHAs fo file names 60 years will be fine
 		}
 		return next(c)
 	}
