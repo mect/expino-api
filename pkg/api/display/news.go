@@ -18,7 +18,7 @@ func (h *HTTPHandler) handleNewsList(c echo.Context) error {
 	}
 
 	var newsItems []db.NewsItem
-	res := h.db.Preload(clause.Associations).Where("display_id", display.ID).Order("\"order\",id").Find(&newsItems)
+	res := h.db.Preload(clause.Associations).Where("display_id", display.ID).Where("hidden", false).Order("\"order\",id").Find(&newsItems)
 	if res.Error != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error reading data: %v", res.Error)})
 	}

@@ -16,6 +16,7 @@ type NewsItem struct {
 	Order         int                `json:"order"`
 	Display       Display            `json:"display"`
 	DisplayID     int                `json:"displayID"`
+	Hidden        bool               `json:"hidden"`
 }
 
 type NewsLanguageItem struct {
