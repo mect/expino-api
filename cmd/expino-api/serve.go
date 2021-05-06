@@ -168,6 +168,13 @@ func (s *serveCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 		cancel() // server ended, stop the world
 	}()
 
+	go func() {
+		for {
+			s.sendBroadcast("PING")
+			time.Sleep(time.Second)
+		}
+	}()
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	for {
