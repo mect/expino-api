@@ -29,7 +29,7 @@ func (h *HTTPHandler) handleDelijn(c echo.Context) error {
 		return err
 	}
 
-	c.Response().WriteHeader(http.StatusOK)
+	c.Response().WriteHeader(resp.StatusCode)
 	io.Copy(c.Response(), resp.Body)
 
 	return nil
