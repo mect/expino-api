@@ -22,4 +22,5 @@ func (h *HTTPHandler) Register(e *echo.Echo) {
 	e.GET("/display", h.handleDisplay)
 	e.GET("/display/news", h.handleNewsList)
 	e.GET("/display/rss", h.handleRss)
+	e.GET("/display/delijn", h.handleDelijn)
 }
