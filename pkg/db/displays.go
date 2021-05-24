@@ -10,4 +10,5 @@ type Display struct {
 	Token      string `json:"token"`
 	TickerRSS  string `json:"tickerRSS"`
 	TickerText string `json:"tickerText"`
+	URL        string `json:"url"`
 }
