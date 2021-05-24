@@ -243,7 +243,7 @@ func (s *serveCmdOptions) login(c echo.Context) error {
 func socketioCORS(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		log.Println(c.Path())
-		if strings.HasPrefix(c.Path(), "/socket.io/") {
+		if strings.HasPrefix(c.Path(), "/ws") {
 			if origin := c.Request().Header.Get("Origin"); origin != "" {
 				c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
 				c.Response().Header().Set("Access-Control-Allow-Origin", origin)
