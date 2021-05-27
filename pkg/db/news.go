@@ -9,14 +9,13 @@ import (
 type NewsItem struct {
 	gorm.Model
 	Name          string             `json:"name"`
-	From          *time.Time         `json:"from"`
-	To            *time.Time         `json:"to"`
 	LanguageItems []NewsLanguageItem `json:"languageItems"`
 	SlideTime     int                `json:"slideTime"`
 	Order         int                `json:"order"`
 	Display       Display            `json:"display"`
 	DisplayID     int                `json:"displayID"`
 	Hidden        bool               `json:"hidden"`
+	TimeFrames    []TimeFrame        `json:"timeFrames"`
 }
 
 type NewsLanguageItem struct {
@@ -26,4 +25,11 @@ type NewsLanguageItem struct {
 	Title      string   `json:"title"`
 	Content    string   `json:"content"`
 	Language   string   `json:"language"`
+}
+
+type TimeFrame struct {
+	gorm.Model
+	NewsItemID int       `json:"newsItemID"`
+	From       time.Time `json:"from"`
+	To         time.Time `json:"to"`
 }

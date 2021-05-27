@@ -77,11 +77,22 @@ func (h *HTTPHandler) handleNewsUpdate(c echo.Context) error {
 	err = h.db.Model(&newsItem).Association("LanguageItems").Replace(&newsItem.LanguageItems)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
+	}
 
+	err = h.db.Model(&newsItem).Association("TimeFrames").Replace(&newsItem.TimeFrames)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
 	}
 
 	for _, langItem := range newsItem.LanguageItems {
 		res := h.db.Save(&langItem)
+		if res.Error != nil {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
+		}
+	}
+
+	for _, tf := range newsItem.TimeFrames {
+		res := h.db.Save(&tf)
 		if res.Error != nil {
 			return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
 		}

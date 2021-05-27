@@ -26,16 +26,17 @@ func (h *HTTPHandler) handleNewsList(c echo.Context) error {
 	var displayItems []db.NewsItem
 
 	for _, item := range newsItems {
-		if item.From != nil && item.To != nil {
-			if time.Now().Before(*item.From) {
-				continue
-			}
-			if time.Now().After(*item.To) {
-				continue
+		showNow := false
+		for _, tf := range item.TimeFrames {
+			if time.Now().After(tf.From) && time.Now().Before(tf.To) {
+				showNow = true
+				break
 			}
 		}
 
-		displayItems = append(displayItems, item)
+		if showNow {
+			displayItems = append(displayItems, item)
+		}
 	}
 
 	return c.JSON(http.StatusOK, displayItems)
