@@ -26,7 +26,7 @@ func (h *HTTPHandler) handleNewsList(c echo.Context) error {
 	var displayItems []db.NewsItem
 
 	for _, item := range newsItems {
-		showNow := false
+		showNow := len(item.TimeFrames) == 0
 		for _, tf := range item.TimeFrames {
 			if time.Now().After(tf.From) && time.Now().Before(tf.To) {
 				showNow = true
