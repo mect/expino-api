@@ -72,6 +72,8 @@ func (h *HTTPHandler) handleDisplayUpdate(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": fmt.Sprintf("error saving data: %v", res.Error)})
 	}
 
+	h.broadcastUpdate()
+
 	return c.JSON(http.StatusOK, display)
 }
 
