@@ -12,7 +12,14 @@ import (
 const delijnHost = "https://api.delijn.be"
 
 func (h *HTTPHandler) handleDelijn(c echo.Context) error {
-	resp, err := http.Get(delijnHost + path.Join("/", c.QueryParam("path")))
+	req, err := http.NewRequest("GET", delijnHost+path.Join("/", c.QueryParam("path")), nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Ocp-Apim-Subscription-Key", c.Request().Header.Get("Ocp-Apim-Subscription-Key"))
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
