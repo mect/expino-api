@@ -9,7 +9,7 @@ import (
 )
 
 // wish I could prevent this but we need proper CORS on this one
-const delijnHost = "https://b2cservices.delijn.be"
+const delijnHost = "https://api.delijn.be"
 
 func (h *HTTPHandler) handleDelijn(c echo.Context) error {
 	resp, err := http.Get(delijnHost + path.Join("/", c.QueryParam("path")))
